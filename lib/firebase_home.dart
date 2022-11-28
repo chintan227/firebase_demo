@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class FirebaseHome extends StatefulWidget {
   const FirebaseHome({Key? key}) : super(key: key);
@@ -35,6 +40,7 @@ class _FirebaseHomeState extends State<FirebaseHome> {
               RaisedButton(onPressed: (){insert();},child: Text("Insert")),
               RaisedButton(onPressed: (){update();},child: Text("Update")),
               RaisedButton(onPressed: (){getData();},child: Text("Get Data")),
+              RaisedButton(onPressed: (){uploadImage();},child: Text("Upload Image")),
             ],
           );
         },)
@@ -72,5 +78,32 @@ class _FirebaseHomeState extends State<FirebaseHome> {
       print('No data available.');
     }
     return snapshot.value;
+  }
+
+
+  uploadImage() async {
+    final firebaseStorage = FirebaseStorage.instance;
+    final imagePicker = ImagePicker();
+    PickedFile? image;
+
+      //Select Image
+      image = await imagePicker.getImage(source: ImageSource.gallery);
+
+      var file = File(image!.path);
+
+      if (image != null){
+        //Upload to Firebase
+        var snapshot = await firebaseStorage.ref()
+            .child('Images/${image.path.split("/").last}')
+            .putFile(file);
+        var downloadUrl = await snapshot.ref.getDownloadURL();
+        setState(() {
+         String imageUrl = downloadUrl;
+         print("--imageUrl---->$imageUrl");
+        });
+      } else {
+        print('No Image Path Received');
+      }
+
   }
 }

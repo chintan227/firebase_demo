@@ -36,6 +36,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   firebase_core: ^2.3.0
   firebase_database: ^10.0.6
+  firebase_storage: ^11.0.6
+  image_picker: ^0.8.6
+  permission_handler: ^10.2.0
   get:
 
 dev_dependencies:
